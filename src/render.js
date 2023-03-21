@@ -24,11 +24,11 @@ const render = (component,  container, place = RenderPosition.BEFOREEND) => {
       break;
     case RenderPosition.BEFOREEND:
       container.append(element);
-      break;  
+      break;
     case RenderPosition.AFTEREND:
       container.after(element);
       break;
-    }
-}
+  }
+};
 
 export {RenderPosition, createElement, render};
