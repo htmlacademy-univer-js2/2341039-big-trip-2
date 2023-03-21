@@ -30,10 +30,10 @@ export default class FiltersView {
       this.element = createElement(this.getTemplate());
     }
 
-      return this.element;
-    }
+    return this.element;
+  }
 
-    removeElement() {
-      this.element = null;
-    }
+  removeElement() {
+    this.element = null;
+  }
 }
