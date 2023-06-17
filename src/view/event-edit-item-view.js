@@ -94,10 +94,8 @@ const createEventEditTemplate = (event, destinations, offersByType) => {
 };
 
 export default class EventEditList {
-  constructor(event, destinations, offersByType) {
+  constructor(event) {
     this.event = event;
-    this.destinations = destinations;
-    this.offersByType = offersByType;
   }
 
   getTemplate() {

@@ -22,13 +22,12 @@ export default class Presenter {
   init() {
     const events = this.eventModel.getEvents();
     const destinations = this.eventModel.getDestinations();
-    const offersByType = this.this.eventModel.getOffersByType();
+    const offersByType = this.eventModel.getOffersByType();
 
     render(this.boardComponent, this.boardContainer, RenderPosition.AFTERBEGIN);
-    render(this.filterComponent, this.boardContainer,);
-    render(this.sortComponent, this.bodyContainer);
-    render(this.eventsList, this.bodyContainer);
-    render(this.eventEditListComponent(events[0], destinations, offersByType), this.eventsList.getElement());
+    render(this.filterComponent, this.boardContainer, RenderPosition.BEFOREEND);
+    render(this.sortComponent, this.bodyContainer, RenderPosition.BEFOREEND);
+    render(this.eventsList, this.bodyContainer, RenderPosition.BEFOREEND);
 
     for (const event of events) {
       render(new EventItemView(event, destinations, offersByType), this.eventsList.getElement());
