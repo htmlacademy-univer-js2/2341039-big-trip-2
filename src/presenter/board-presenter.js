@@ -22,7 +22,7 @@ export default class Presenter {
   init() {
     const events = this.eventModel.getEvents();
     const destinations = this.eventModel.getDestinations();
-    const offersByType = this.this.eventModel.getOffersByType();
+    const offersByType = this.eventModel.getOffersByType();
 
     render(this.boardComponent, this.boardContainer, RenderPosition.AFTERBEGIN);
     render(this.filterComponent, this.boardContainer,);

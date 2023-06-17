@@ -17,7 +17,7 @@ export default class EventsModel {
     return this.destinations;
   }
 
-  getOfffersByType() {
+  getOffersByType() {
     return this.offersByType;
   }
 }

@@ -12,7 +12,7 @@ function createElement(template) {
   return newElement.firstElementChild;
 }
 
-const render = (component,  container, place = RenderPosition.BEFOREEND) => {
+const render = (component, container, place = RenderPosition.BEFOREEND) => {
   const element = component.getElement();
 
   switch (place) {
