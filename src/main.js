@@ -1,4 +1,4 @@
-import  Presenter from './presenter/board-presenter.js';
+import Presenter from './presenter/board-presenter.js';
 
 const siteMainElement = document.querySelector('.trip-main');
 const siteHeaderElement = document.querySelector('.trip-events');
