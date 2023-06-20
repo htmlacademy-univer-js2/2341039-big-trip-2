@@ -14,24 +14,24 @@ export default class Presenter {
     this.boardComponent = new BoardView();
     this.filterComponent = new FiltersView();
     this.sortComponent = new SortView();
-    this.eventEditListComponent = new EventEditList();
     this.eventsList = new EventsListView();
     this.eventModel = new EventsModel();
+
+    this.events = this.eventModel.getEvents();
+    this.destinations = this.eventModel.getDestinations();
+    this.offersByType = this.eventModel.getOffersByType();
+    this.eventEditListComponent = new EventEditList(this.events[0], this.destinations, this.offersByType);
   }
 
   init() {
-    const events = this.eventModel.getEvents();
-    const destinations = this.eventModel.getDestinations();
-    const offersByType = this.eventModel.getOffersByType();
-
     render(this.boardComponent, this.boardContainer, RenderPosition.AFTERBEGIN);
     render(this.filterComponent, this.boardContainer,);
     render(this.sortComponent, this.bodyContainer);
     render(this.eventsList, this.bodyContainer);
-    render(this.eventEditListComponent(events[0], destinations, offersByType), this.eventsList.getElement());
+    render(this.eventEditListComponent, this.eventsList.getElement());
 
-    for (const event of events) {
-      render(new EventItemView(event, destinations, offersByType), this.eventsList.getElement());
+    for (const event of this.events) {
+      render(new EventItemView(event, this.destinations, this.offersByType), this.eventsList.getElement());
     }
 
   }

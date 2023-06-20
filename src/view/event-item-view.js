@@ -1,9 +1,9 @@
 import {createElement} from '../render.js';
 
 const createEventItemTemplate = (event, destinations, offersByType) => {
-  const eventDestination = destinations.find((dest) => dest.id === event.destinations);
+  const eventDestination = destinations.find((dest) => dest.id === event.destination);
   const eventTypeOffers = offersByType.find((off) => off.type === event.type).offers;
-  const eventOffers = eventTypeOffers.filter((offer) => event.offer.includes(offer.id));
+  const eventOffers = eventTypeOffers.filter((offer) => event.offers.includes(offer.id));
 
   return (
     `<li class="trip-events__item">
