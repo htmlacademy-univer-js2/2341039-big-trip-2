@@ -6,6 +6,7 @@ import EventEditList from '../view/event-edit-item-view.js';
 import SortView from '../view/sort-view.js';
 import EventsListView from '../view/events-list-view.js';
 import EventsModel from '../model/events-model.js';
+import ListEmptyView from '../view/empty-list-view.js';
 
 export default class Presenter {
   #boardContainer = null;
@@ -30,6 +31,12 @@ export default class Presenter {
   init() {
     render(this.boardComponent, this.#boardContainer, RenderPosition.AFTERBEGIN);
     render(this.sortComponent, this.#boardContainer);
+
+    if (this.events.length === 0) {
+      render(new ListEmptyView(), this.#bodyContainer);
+      return;
+    }
+
     render(this.#eventsList, this.#bodyContainer);
 
     for (const event of this.events) {
