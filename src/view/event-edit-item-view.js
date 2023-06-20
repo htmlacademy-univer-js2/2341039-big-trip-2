@@ -4,7 +4,7 @@ const upFirstLetter = (word) => `${word[0].toUpperCase}${word.slice(1)}`;
 const formatOfferTitle = (title) => title.split(' ').join('_');
 
 const createEventEditTemplate = (event, destinations, offersByType) => {
-  const eventDestination = destinations.find((dest) => dest.id === event.destinations);
+  const eventDestination = destinations.find((dest) => dest.id === event.destination);
   const eventTypeOffers = offersByType.find((off) => off.type === event.type).offers;
 
   return (
@@ -68,7 +68,7 @@ const createEventEditTemplate = (event, destinations, offersByType) => {
     ${eventTypeOffers.map((typeOffer) => (
       `<div class="event__offer-selector">
         <input class="event__offer-checkbox  visually-hidden" id="event-offer-${formatOfferTitle(typeOffer.title)}-1" 
-          type="checkbox" name="event-offer-${formatOfferTitle(typeOffer.title)}" ${event.offer.includes(typeOffer.id) ? 'checked' : ''} >
+          type="checkbox" name="event-offer-${formatOfferTitle(typeOffer.title)}" ${event.offers.includes(typeOffer.id) ? 'checked' : ''} >
         <label class="event__offer-label" for="event-offer-${formatOfferTitle(typeOffer.title)}-1">
           <span class="event__offer-title">${typeOffer.title}</span>
           &plus;&euro;&nbsp;
@@ -78,7 +78,8 @@ const createEventEditTemplate = (event, destinations, offersByType) => {
     )).join('')}
             </div>
           </section>
-          <section class="event__section  event__section--destination">
+          ${eventDestination ? (
+      `<section class="event__section  event__section--destination">
             <h3 class="event__section-title  event__section-title--destination">Destination</h3>
             <p class="event__destination-description">${eventDestination.description}</p>
             <div class="event__photos-container">
@@ -86,7 +87,9 @@ const createEventEditTemplate = (event, destinations, offersByType) => {
               ${eventDestination.pictures.map((pic) => `<img class="event__photo" src="${pic.src}" alt="${pic.description}"></img>`)}
               </div>
             </div>
-          </section>
+          </section>`
+    ) : null}
+          
         </section>
       </form>
     </li>`
