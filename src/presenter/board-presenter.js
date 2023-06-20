@@ -8,13 +8,17 @@ import EventsListView from '../view/events-list-view.js';
 import EventsModel from '../model/events-model.js';
 
 export default class Presenter {
+  #boardContainer = null;
+  #bodyContainer = null;
+  #eventsList = null;
+
   constructor({boardContainer, bodyContainer}) {
-    this.boardContainer = boardContainer;
-    this.bodyContainer = bodyContainer;
+    this.#boardContainer = boardContainer;
+    this.#bodyContainer = bodyContainer;
     this.boardComponent = new BoardView();
     this.filterComponent = new FiltersView();
     this.sortComponent = new SortView();
-    this.eventsList = new EventsListView();
+    this.#eventsList = new EventsListView();
     this.eventModel = new EventsModel();
 
     this.events = this.eventModel.getEvents();
@@ -24,15 +28,52 @@ export default class Presenter {
   }
 
   init() {
-    render(this.boardComponent, this.boardContainer, RenderPosition.AFTERBEGIN);
-    render(this.filterComponent, this.boardContainer,);
-    render(this.sortComponent, this.bodyContainer);
-    render(this.eventsList, this.bodyContainer);
-    render(this.eventEditListComponent, this.eventsList.getElement());
+    render(this.boardComponent, this.#boardContainer, RenderPosition.AFTERBEGIN);
+    render(this.sortComponent, this.#boardContainer);
+    render(this.#eventsList, this.#bodyContainer);
 
     for (const event of this.events) {
-      render(new EventItemView(event, this.destinations, this.offersByType), this.eventsList.getElement());
+      this.#renderEvent(event, this.destinations, this.offersByType);
     }
+  }
 
+  #renderEvent(event, destinations, offersByType) {
+    const eventComponent = new EventItemView(event, destinations, offersByType);
+    const eventEditComponent = new EventEditList(event, destinations, offersByType);
+
+    const turnEventToEdit = () => {
+      this.#eventsList.element.replaceChild(eventEditComponent.element, eventComponent.element);
+    };
+    const turnEventToView = () => {
+      this.#eventsList.element.replaceChild(eventComponent.element, eventEditComponent.element);
+    };
+
+    const onEscKeyup = (evt) => {
+      if (evt.key === 'Escape') {
+        turnEventToView();
+        document.removeEventListener('keyup', onEscKeyup);
+      }
+    };
+
+    eventComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+      turnEventToEdit();
+      document.removeEventListener('keyup', onEscKeyup);
+    });
+    eventEditComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+      turnEventToView();
+      document.removeEventListener('keyup', onEscKeyup);
+    });
+    eventEditComponent.element.querySelector('.event--edit').addEventListener('submit', (evt) => {
+      evt.preventDefault();
+      turnEventToView();
+      document.removeEventListener('keyup', onEscKeyup);
+    });
+    eventEditComponent.element.querySelector('.event--edit').addEventListener('reset', (evt) => {
+      evt.preventDefault();
+      turnEventToView();
+      document.removeEventListener('keyup', onEscKeyup);
+    });
+
+    render(eventComponent, this.#eventsList.element);
   }
 }
