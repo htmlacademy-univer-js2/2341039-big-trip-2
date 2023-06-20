@@ -55,8 +55,11 @@ const createEventEditTemplate = (event, destinations, offersByType) => {
             </label>
             <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${event.basePrice}">
           </div>
-          <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-          <button class="event__reset-btn" type="reset">Cancel</button>
+            <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
+            <button class="event__reset-btn" type="reset">Cancel</button>
+            <button class="event__rollup-btn" type="button">
+          <span class="visually-hidden">Open event</span>
+        </button>
         </header>
 
 
@@ -97,25 +100,30 @@ const createEventEditTemplate = (event, destinations, offersByType) => {
 };
 
 export default class EventEditList {
+  #element = null
+  #event = null
+  #destinations = []
+  #offersByType = []
+
   constructor(event, destinations, offersByType) {
-    this.event = event;
-    this.destinations = destinations;
-    this.offersByType = offersByType;
+    this.#event = event;
+    this.#destinations = destinations;
+    this.#offersByType = offersByType;
   }
 
-  getTemplate() {
-    return createEventEditTemplate(this.event, this.destinations, this.offersByType);
+  get template() {
+    return createEventEditTemplate(this.#event, this.#destinations, this.#offersByType);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
 
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }
