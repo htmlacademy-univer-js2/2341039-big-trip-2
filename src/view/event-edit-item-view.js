@@ -124,7 +124,7 @@ export default class TaskEditView extends AbstractView {
     const modeButton = this.element.querySelector('.event__rollup-btn');
     if (modeButton) {
       this._callback.modeButtonClick = callback;
-      this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#modeButtonClickHandler);
+      modeButton.addEventListener('click', this.#modeButtonClickHandler);
     }
   }
 
@@ -135,7 +135,11 @@ export default class TaskEditView extends AbstractView {
 
   setFormResetHandler = (callback) => {
     this._callback.formReset = callback;
-    this.element.querySelector('.event__rollup-btn').addEventListener('reset', this.#formResetHandler);
+    this.element.querySelector('.event--edit').addEventListener('reset', this.#formResetHandler);
+  }
+
+  #modeButtonClickHandler = () => {
+    this._callback.modeButtonClick();
   }
 
   #formSubmitHandler = (evt) => {
@@ -146,9 +150,5 @@ export default class TaskEditView extends AbstractView {
   #formResetHandler = (evt) => {
     evt.preventDefault();
     this._callback.formReset();
-  }
-
-  #modeButtonClickHandler = () => {
-    this._callback.modeButtonClick();
   }
 }
