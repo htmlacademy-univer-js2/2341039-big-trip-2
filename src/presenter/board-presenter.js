@@ -1,4 +1,4 @@
-import {render} from './framework/render.js';
+import {RenderPosition, render, replace} from '../framework/render.js';
 import BoardView from '../view/board-view.js';
 import FiltersView from '../view/filters-view';
 import EventItemView from '../view/event-item-view';
@@ -29,8 +29,8 @@ export default class Presenter {
   }
 
   init() {
-    render(this.boardComponent, this.#boardContainer,);
-    render(this.sortComponent, this.#boardContainer);
+    render(this.sortComponent, this.#boardContainer, RenderPosition.AFTERBEGIN);
+    render(this.boardComponent, this.#boardContainer, RenderPosition.AFTERBEGIN);
 
     if (this.events.length === 0) {
       render(new ListEmptyView(), this.#bodyContainer);
@@ -49,10 +49,10 @@ export default class Presenter {
     const eventEditComponent = new EventEditList(event, destinations, offersByType);
 
     const turnEventToEdit = () => {
-      this.#eventsList.element.replaceChild(eventEditComponent.element, eventComponent.element);
+      replace(eventEditComponent, eventComponent);
     };
     const turnEventToView = () => {
-      this.#eventsList.element.replaceChild(eventComponent.element, eventEditComponent.element);
+      replace(eventComponent, eventEditComponent);
     };
 
     const onEscKeyup = (evt) => {
@@ -70,13 +70,11 @@ export default class Presenter {
       turnEventToView();
       document.removeEventListener('keyup', onEscKeyup);
     });
-    eventEditComponent.setModeButtonClickHandlerevt((evt) => {
-      evt.preventDefault();
+    eventEditComponent.setModeButtonClickHandler(() => {
       turnEventToView();
       document.removeEventListener('keyup', onEscKeyup);
     });
-    eventEditComponent.setModeButtonClickHandler((evt) => {
-      evt.preventDefault();
+    eventEditComponent.setModeButtonClickHandler(() => {
       turnEventToView();
       document.removeEventListener('keyup', onEscKeyup);
     });
