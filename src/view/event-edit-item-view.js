@@ -1,86 +1,91 @@
-import { createElement } from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import { EVENT_TYPES } from './const.js';
-const upFirstLetter = (word) => `${word[0].toUpperCase}${word.slice(1)}`;
+const upFirstLetter = (word) => `${word[0].toUpperCase()}${word.slice(1)}`;
 const formatOfferTitle = (title) => title.split(' ').join('_');
 
 const createEventEditTemplate = (event, destinations, offersByType) => {
   const eventDestination = destinations.find((dest) => dest.id === event.destination);
   const eventTypeOffers = offersByType.find((off) => off.type === event.type).offers;
+  const eventId = event.id || 0;
 
   return (
     `<li class="trip-events__item">
       <form class="event event--edit" action="#" method="post">
         <header class="event__header">
           <div class="event__type-wrapper">
-            <label class="event__type  event__type-btn" for="event-type-toggle-1">
+            <label class="event__type  event__type-btn" for="event-type-toggle-${eventId}">
               <span class="visually-hidden">Choose event type</span>
               <img class="event__type-icon" width="17" height="17" src="img/icons/${event.type}.png" alt="Event type icon">
             </label>
-            <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
+            <input class="event__type-toggle  visually-hidden" id="event-type-toggle-${eventId}" type="checkbox">
             <div class="event__type-list">
               <fieldset class="event__type-group">
                 <legend class="visually-hidden">Event type</legend>
 
     ${EVENT_TYPES.map((type) => (
       `<div class="event__type-item">
-          <input id="event-type-${type}-${event.id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}">
-          <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-${event.id}">${upFirstLetter(type)}</label>
+          <input id="event-type-${type}-${eventId}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${event.type === type ? 'checked' : ''}>
+          <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-${eventId}">${upFirstLetter(type)}</label>
         </div>`
     )).join('')}
               </fieldset>
             </div>
           </div>
           <div class="event__field-group  event__field-group--destination">
-            <label class="event__label  event__type-output" for="event-destination-1">
+            <label class="event__label  event__type-output" for="event-destination-${eventId}">
               ${event.type}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${eventDestination.name}" list="destination-list-1">
-            <datalist id="destination-list-1">
-              <option value="Amsterdam"></option>
-              <option value="Geneva"></option>
-              <option value="Chamonix"></option>
+            <input class="event__input  event__input--destination" id="event-destination-${eventId}" type="text" name="event-destination" value="${eventDestination?.name || ''}" list="destination-list-${eventId}">
+            <datalist id="destination-list-${eventId}">
+            ${destinations.map((dest) => `option value="${dest.name}"><option>`).join('')}
             </datalist>
           </div>
           <div class="event__field-group  event__field-group--time">
-            <label class="visually-hidden" for="event-start-time-1">From</label>
-            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${'19/03/19 00:00'}">
+            <label class="visually-hidden" for="event-start-time-${eventId}">From</label>
+            <input class="event__input  event__input--time" id="event-start-time-${eventId}" type="text" name="event-start-time" value="${'19/03/19 00:00'}">
             &mdash;
-            <label class="visually-hidden" for="event-end-time-1">To</label>
-            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${'19/03/19 00:00'}">
+            <label class="visually-hidden" for="event-end-time-${eventId}">To</label>
+            <input class="event__input  event__input--time" id="event-end-time-${eventId}" type="text" name="event-end-time" value="${'19/03/19 00:00'}">
           </div>
           <div class="event__field-group  event__field-group--price">
-            <label class="event__label" for="event-price-1">
+            <label class="event__label" for="event-price-${eventId}">
               <span class="visually-hidden">Price</span>
               &euro;
             </label>
-            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${event.basePrice}">
+            <input class="event__input  event__input--price" id="event-price-${eventId}" type="text" name="event-price" value="${event.basePrice}">
           </div>
-            <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-            <button class="event__reset-btn" type="reset">Cancel</button>
-            <button class="event__rollup-btn" type="button">
+            <button class="event__save-btn  btn  btn--blue" type="submit">${event.id ? 'Save' : 'Save'}</button>
+            <button class="event__reset-btn" type="reset">${event.id ? 'Delete' : 'Cancel'}</button>
+            ${event.id ? (
+      `<button class="event__rollup-btn" type="button">
           <span class="visually-hidden">Open event</span>
-        </button>
+        </button>`
+    ) : ''}
+            
         </header>
 
 
         <section class="event__details">
-          <section class="event__section  event__section--offers">
+        ${eventTypeOffers.length > 0 ? (
+      `<section class="event__section  event__section--offers">
             <h3 class="event__section-title  event__section-title--offers">Offers</h3>
             <div class="event__available-offers">
 
     ${eventTypeOffers.map((typeOffer) => (
-      `<div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${formatOfferTitle(typeOffer.title)}-1" 
+        `<div class="event__offer-selector">
+        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${formatOfferTitle(typeOffer.title)}-${eventId}" 
           type="checkbox" name="event-offer-${formatOfferTitle(typeOffer.title)}" ${event.offers.includes(typeOffer.id) ? 'checked' : ''} >
-        <label class="event__offer-label" for="event-offer-${formatOfferTitle(typeOffer.title)}-1">
+        <label class="event__offer-label" for="event-offer-${formatOfferTitle(typeOffer.title)}-${eventId}">
           <span class="event__offer-title">${typeOffer.title}</span>
           &plus;&euro;&nbsp;
           <span class="event__offer-price">${typeOffer.price}</span>
         </label>
       </div>`
-    )).join('')}
+      )).join('')}
             </div>
-          </section>
+          </section>`
+    ) : ''}
+          
           ${eventDestination ? (
       `<section class="event__section  event__section--destination">
             <h3 class="event__section-title  event__section-title--destination">Destination</h3>
@@ -99,13 +104,13 @@ const createEventEditTemplate = (event, destinations, offersByType) => {
   );
 };
 
-export default class EventEditList {
-  #element = null
+export default class TaskEditView extends AbstractView {
   #event = null
   #destinations = []
   #offersByType = []
 
   constructor(event, destinations, offersByType) {
+    super();
     this.#event = event;
     this.#destinations = destinations;
     this.#offersByType = offersByType;
@@ -115,15 +120,35 @@ export default class EventEditList {
     return createEventEditTemplate(this.#event, this.#destinations, this.#offersByType);
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
+  setModeButtonClickHandler = (callback) => {
+    const modeButton = this.element.querySelector('.event__rollup-btn');
+    if (modeButton) {
+      this._callback.modeButtonClick = callback;
+      this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#modeButtonClickHandler);
     }
-
-    return this.#element;
   }
 
-  removeElement() {
-    this.#element = null;
+  setFormSubmitHandler = (callback) => {
+    this._callback.formSubmit = callback;
+    this.element.querySelector('.event--edit').addEventListener('submit', this.#formSubmitHandler);
+  }
+
+  setFormResetHandler = (callback) => {
+    this._callback.formReset = callback;
+    this.element.querySelector('.event__rollup-btn').addEventListener('reset', this.#formResetHandler);
+  }
+
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.formSubmit();
+  }
+
+  #formResetHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.formReset();
+  }
+
+  #modeButtonClickHandler = () => {
+    this._callback.modeButtonClick();
   }
 }
