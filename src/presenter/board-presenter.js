@@ -1,7 +1,7 @@
+import {render} from './framework/render.js';
 import BoardView from '../view/board-view.js';
 import FiltersView from '../view/filters-view';
 import EventItemView from '../view/event-item-view';
-import {RenderPosition, render} from '../render.js';
 import EventEditList from '../view/event-edit-item-view.js';
 import SortView from '../view/sort-view.js';
 import EventsListView from '../view/events-list-view.js';
@@ -29,7 +29,7 @@ export default class Presenter {
   }
 
   init() {
-    render(this.boardComponent, this.#boardContainer, RenderPosition.AFTERBEGIN);
+    render(this.boardComponent, this.#boardContainer,);
     render(this.sortComponent, this.#boardContainer);
 
     if (this.events.length === 0) {
@@ -62,20 +62,20 @@ export default class Presenter {
       }
     };
 
-    eventComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+    eventComponent.setModeButtonClickHandler(() => {
       turnEventToEdit();
-      document.removeEventListener('keyup', onEscKeyup);
+      document.addEventListener('keyup', onEscKeyup);
     });
-    eventEditComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+    eventEditComponent.setModeButtonClickHandler(() => {
       turnEventToView();
       document.removeEventListener('keyup', onEscKeyup);
     });
-    eventEditComponent.element.querySelector('.event--edit').addEventListener('submit', (evt) => {
+    eventEditComponent.setModeButtonClickHandlerevt((evt) => {
       evt.preventDefault();
       turnEventToView();
       document.removeEventListener('keyup', onEscKeyup);
     });
-    eventEditComponent.element.querySelector('.event--edit').addEventListener('reset', (evt) => {
+    eventEditComponent.setModeButtonClickHandler((evt) => {
       evt.preventDefault();
       turnEventToView();
       document.removeEventListener('keyup', onEscKeyup);

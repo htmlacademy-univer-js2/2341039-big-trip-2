@@ -1,25 +1,26 @@
-import {createElement} from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
+import { getDuration, humanizeDate } from '../timedate/timedate.js';
+import { DateFormat } from './const.js';
 
 const createEventItemTemplate = (event, destinations, offersByType) => {
   const eventDestination = destinations.find((dest) => dest.id === event.destination);
   const eventTypeOffers = offersByType.find((off) => off.type === event.type).offers;
-  const eventOffers = eventTypeOffers.filter((offer) => event.offers.includes(offer.id));
 
   return (
     `<li class="trip-events__item">
       <div class="event">
-        <time class="event__date" datetime="${'2019-03-18'}">${'MAR 18'}</time>
+        <time class="event__date" datetime="${humanizeDate(event.dateForm, DateFormat.SERVISE_MAIN)}">${humanizeDate(event.dateForm, DateFormat.MAIN)}</time>
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${event.type}.png" alt="Event type icon">
         </div>
         <h3 class="event__title">${event.type} ${eventDestination.name}</h3>
         <div class="event__schedule">
           <p class="event__time">
-            <time class="event__start-time" datetime="${'2019-03-18T10:30'}">${'10:30'}</time>
+            <time class="event__start-time" datetime="${humanizeDate(event.dateForm, DateFormat.EDIT)}">${humanizeDate(event.dateForm, DateFormat.VIEW)}</time>
             &mdash;
-            <time class="event__end-time" datetime="${'2019-03-18T11:00'}">${'11:00'}</time>
+            <time class="event__end-time" datetime="${humanizeDate(event.dateForm, DateFormat.EDIT)}">${humanizeDate(event.dateForm, DateFormat.VIEW)}</time>
           </p>
-          <p class="event__duration">30M</p>
+          <p class="event__duration">${getDuration(event.dateForm, event.dateTo)}</p>
         </div>
         <p class="event__price">
           &euro;&nbsp;<span class="event__price-value">${event.basePrice}</span>
@@ -27,7 +28,7 @@ const createEventItemTemplate = (event, destinations, offersByType) => {
         <h4 class="visually-hidden">Offers:</h4>
         <ul class="event__selected-offers">
 
-   ${eventOffers.map((offer) => (
+    ${eventTypeOffers.map((offer) => (
       `<li class="event__offer">
         <span class="event__offer-title">${offer.title}</span>
         &plus;&euro;&nbsp;
@@ -50,13 +51,13 @@ const createEventItemTemplate = (event, destinations, offersByType) => {
   );
 };
 
-export default class EventItemView {
-  #element = null
+export default class TaskView extends AbstractView {
   #event = null
   #destinations = []
   #offersByType = []
 
   constructor(event, destinations, offersByType) {
+    super();
     this.#event = event;
     this.#destinations = destinations;
     this.#offersByType = offersByType;
@@ -67,15 +68,12 @@ export default class EventItemView {
     return createEventItemTemplate(this.#event, this.#destinations, this.#offersByType);
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
+  setModeButtonClickHandler = (callback) => {
+    this._callback.modeButtonClick = callback;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#modeButtonClickHandler);
   }
 
-  removeElement() {
-    this.#element = null;
+  #modeButtonClickHandler = () => {
+    this._callback.modeButtonClick();
   }
 }
